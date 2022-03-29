@@ -1,0 +1,46 @@
+{
+  "name": "xplorer",
+  "version": "0.0.1",
+  "description": "An overengineered file explorer.",
+  "main": "index.js",
+  "repository": "https://github.com/ShapeMess/XPlorer.git",
+  "author": "ShapeMess",
+  "license": "GPL-3.0",
+  "private": true,
+  "scripts": {
+    "svelte-build": "rollup -c",
+    "svelte-dev": "rollup -c -w",
+    "svelte-start": "sirv public --no-clear",
+    "svelte-check": "svelte-check --tsconfig ./tsconfig.json",
+    "electron": "electron . --dev",
+    "dev": "node internal/_devServer.js"
+  },
+  "dependencies": {
+    "electron": "^17.2.0",
+    "electron-reload": "^2.0.0-alpha.1",
+    "electron-window-state": "^5.0.3",
+    "sirv-cli": "^2.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "@rollup/plugin-typescript": "^8.0.0",
+    "@tsconfig/svelte": "^2.0.0",
+    "commander": "^9.1.0",
+    "electron-builder": "^22.14.13",
+    "prompt": "^1.2.2",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "sass": "^1.49.9",
+    "svelte": "^3.0.0",
+    "svelte-check": "^2.0.0",
+    "svelte-preprocess": "^4.0.0",
+    "tree-kill": "^1.2.2",
+    "tslib": "^2.0.0",
+    "typescript": "^4.0.0",
+    "yaml": "^1.10.2"
+  }
+}

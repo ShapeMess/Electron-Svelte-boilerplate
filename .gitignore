@@ -1,0 +1,17 @@
+
+/node_modules/
+
+# Compiled public files
+/app/bundle/
+/app/sass/*.css
+/app/sass/*.map
+
+# TypeScript compilation results
+/backend/
+
+# OS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+*.ini
