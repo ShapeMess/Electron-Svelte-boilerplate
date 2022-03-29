@@ -26,7 +26,7 @@ prompt.on('watch', () => {
 prompt.on('help', () => {
     console.log(
 `\x1b[34mreload  -   \x1b[0mForces the Electron app to reload entirely (does not affect Svelte/TS compilers).
-\x1b[34mwatch   -   \x1b[0mWatches specified directories and files for changes and reloads Electron automatically (list: internal/watchlist.json).
+\x1b[34mwatch   -   \x1b[0mWatches specified directories and files for changes and reloads Electron automatically (list in internal/watchlist.yaml).
 `
     );
 })
@@ -54,6 +54,37 @@ const ensureDelay = (callback) => {
     }
 };
 
+
+/**
+ * Kills all child processes (Electron, Svelte and TS compiler)
+ * @param {number} excludedPID 
+ */
+function killAll(excludedPID) {
+    if (!_closing) {
+
+        _closing = true;
+        let threads = [electron, svelteServer, tsCompiler];
+        let counter = 0;
+
+        const kill = () => {
+            if (counter === threads.length) {
+                process.exit()
+            }
+            else {
+                if (threads[counter].process.pid !== excludedPID) {
+                    treeKill(threads[counter].process.pid, (err) => {
+                        if (err) console.error(err);
+                        kill(counter++);
+                    });
+                }
+                else kill(counter++);
+            }
+        }
+
+        kill();
+    }
+}
+
 // Watch directories and restart Electron if set with --watch or -w
 function watchBackend() {
     console.log('\x1b[31mEnabled live reload for backend files.\x1b[0m');
@@ -76,51 +107,26 @@ if (options.watch) watchBackend();
 const electron = new Process('npm', ['run', 'electron']);
 
 electron.onClosed(() => {
-    console.log(`\n\x1b[31mElectron got closed.\x1b[0m`);
-    killAll();
+    console.log(`\n\x1b[31mKilled Electron.\x1b[0m`);
+    killAll(electron.process.pid);
 });
 
 // Svelte dev server
 const svelteServer = new Process('npm', ['run', 'svelte-dev']);
 
 svelteServer.onClosed(() => {
-    console.log(`\n\x1b[31mSvelte dev server got closed.\x1b[0m`);
-    killAll();
+    console.log(`\n\x1b[31mKilled Svelte.\x1b[0m`);
+    killAll(svelteServer.process.pid);
 });
 
 // TypeScript compiler
 const tsCompiler = new Process('tsc', ['-w'], { cwd: join(root, 'src') });
 
 tsCompiler.onClosed(() => {
-    console.log(`\n\x1b[31mThe TypeScript compiler got closed.\x1b[0m`);
-    killAll();
+    console.log(`\n\x1b[31mKilled TS.\x1b[0m`);
+    killAll(tsCompiler.process.pid);
 });
 
 
-/**
- * @param {string[]} threads 
- */
-function killAll() {
-    if (!_closing) {
-
-        _closing = true;
-        let threads = [electron, svelteServer, tsCompiler];
-        let counter = 0;
-
-        const kill = () => {
-            if (counter === threads.length) {
-                process.exit()
-            }
-            else {
-                treeKill(threads[counter].process.pid, (err) => {
-                    if (err) console.error(err);
-                    kill(counter++);
-                });
-            }
-        }
-
-        kill();
-    }
-}
 
 

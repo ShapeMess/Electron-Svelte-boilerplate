@@ -32,14 +32,15 @@ module.exports = new class {
                     let command = input[0];
                     input.shift();
         
-                    console.log('\n');
                     if (this._wantsExit) this._wantsExit = false;
-                    else {
-                        if (!this._handlers[command]) console.log('\x1b[31mUnknown command. Type "help" for a list of commands.\x1b[0m')
-                        else this._handlers[command](input);
+                    else if (this._chars.length > 0) {
+                        if (!this._handlers[command]) console.log('\n\x1b[31mUnrecognised command. Type "help" for a list of commands.\x1b[0m')
+                        else {
+                            process.stdout.write('\n');
+                            this._handlers[command](input);
+                        }
                     }
 
-                    process.stdout.write('\n');
                     this._chars = [];
                     break;
                 }
@@ -73,17 +74,22 @@ module.exports = new class {
     }
 
     displayText() {
-        this._wantsExit 
-            ? !this._closing && readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
-                readline.clearLine(process.stdout, 0, () => {
-                    process.stdout.write(`\x1b[31mAre you sure you want to exit? (yes: Ctrl+C no: Enter)\x1b[0m ${this._chars.join('')}`);
+        if (this._wantsExit) {
+            if (!this._closing) {
+                readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
+                    readline.clearLine(process.stdout, 0, () => {
+                        process.stdout.write(`\x1b[31mAre you sure you want to exit? (yes: Ctrl+C no: Enter)\x1b[0m `);
+                    })
                 })
-            })
-            : readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
+            }
+        }
+        else {
+            readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
                 readline.clearLine(process.stdout, 0, () => {
                     process.stdout.write(this._chars.join(''));
                 })
             });
+        }
         
     }
 
