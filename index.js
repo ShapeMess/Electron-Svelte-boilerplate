@@ -17,13 +17,13 @@ _development && require('electron-reload')(__dirname);
  */ 
 let mainWindow; 
 
-const createWindow = () => { 
+const createWindow = () => {
 
     // Load the previous state of the window (size/position) with fallback to defaults
     let mainWinState = windowStateKeeper({
         defaultWidth: 800,
         defaultHeight: 600,
-    }); 
+    });
 
     // Create the browser window.
     mainWindow = new BrowserWindow({

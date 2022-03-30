@@ -42,6 +42,7 @@ module.exports = new class {
                     }
 
                     this._chars = [];
+                    this.displayText();
                     break;
                 }
 
@@ -86,7 +87,7 @@ module.exports = new class {
         else {
             readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
                 readline.clearLine(process.stdout, 0, () => {
-                    process.stdout.write(this._chars.join(''));
+                    process.stdout.write(`> ${this._chars.join('')}`);
                 })
             });
         }
