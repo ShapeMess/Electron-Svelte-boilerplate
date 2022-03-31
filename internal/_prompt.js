@@ -49,7 +49,7 @@ module.exports = new class {
                     }
                     else if (this._chars.length > 0) {
                         if (!this._handlers[command]) {
-                            console.log(c.redBright('\n\nUnrecognised command. Type "help" for a list of commands.'));
+                            console.log(c.redBright('\n\nUnrecognised command. Type "help" for a list of commands.\n'));
                         }
                         else {
                             process.stdout.write('\n');
@@ -103,7 +103,7 @@ module.exports = new class {
         else {
             readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
                 readline.clearLine(process.stdout, 0, () => {
-                    process.stdout.write(`> ${this._chars.join('')}`);
+                    process.stdout.write(`${c.yellowBright('>')} ${this._chars.join('')}`);
                 })
             });
         }

@@ -46,7 +46,7 @@ let _watchingBackend = false;
 
 // Watch directories and restart Electron if set with --watch or -w
 function watchBackend() {
-    console.log(c.redBright('Enabled live reload for backend files.'));
+    console.log(c.redBright('\nEnabled live reload for backend files.\n'));
     _watchingBackend = true;
 
     watched.directories.forEach(dir => {
@@ -83,6 +83,18 @@ const manager = new Manager([
     },
 ]);
 
+manager.messages = {
+    processSpawning: 'Starting %s.',
+    processClosed: 'Process %s closed unexpectedly.',
+    processForceClosed: 'Killed process %s.',
+    processRestarting: '\nRestarting process %s.',
+
+    startSequenceError: 'An error had accured while spawning child processes.',
+
+    startProcessSuccess: 'Successfully spawned all child processes.',
+    managerExit: 'Closing the process manager.'
+}
+
 // Close all the child processes if user wants to exit the app.
 prompt.onExit = () => manager.exit();
 
@@ -91,16 +103,15 @@ prompt.onExit = () => manager.exit();
 // Reload <name>
 prompt.on('reload', async (argv) => {
     let status = await manager.restart(argv[0]);
-    console.log('');
-    if (status === 'success') console.log(c.greenBright(`Successfully restarted process "${argv[0]}".`));
-    if (status === 'failed') console.log(c.redBright(`Failed to restart process.`));
-    if (status === 'unknown_name') console.log(c.redBright(`Unknown process name. Type "list" for a list of running processes.`));
+    if (status === 'success') console.log(c.greenBright(`\nSuccessfully restarted process "${argv[0]}".\n`));
+    if (status === 'failed') console.log(c.redBright(`\nFailed to restart process.\n`));
+    if (status === 'unknown_name') console.log(c.redBright(`\nUnknown process name. Type "list" for a list of running processes.\n`));
 });
 
 // Watch
 prompt.on('watch', () => {
     if (!_watchingBackend) watchBackend();
-    else console.log(c.redBright('\nAlready watching backend files.'))
+    else console.log(c.redBright('\nAlready watching backend files.\n'))
 });
 
 // List
@@ -120,6 +131,7 @@ prompt.on('list', () => {
         }
     }
 
+    console.log('');
     console.log(processes.join('\n'))
     console.log('');
 
@@ -129,9 +141,9 @@ prompt.on('list', () => {
 prompt.on('help', () => {
     console.log(
 c`
-{blueBright reload <name>}  Reloads a given process.
-{blueBright watch}           Watches files/directories specified in internal/watchlist.yaml for changes and reloads Electron automatically.
 {blueBright list}            Lists all running child processes.
+{blueBright reload <name>}   Reloads a given process.
+{blueBright watch}           Watches files/directories specified in {underline internal/watchlist.yaml} for changes and reloads Electron automatically.
 `
     );
 })
