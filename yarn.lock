@@ -161,10 +161,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@shapelessed/simple-dev-manager@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@shapelessed/simple-dev-manager/-/simple-dev-manager-1.0.2.tgz#4da9f2ebdf523aa18beb0bc550a77e33acaee7a4"
-  integrity sha512-XLqlBqk7Fnk/iHdpAJ4BprZ2V93prm90cgcvNHYv1/2wsGpy39lV064CwZZItkbhTbmx0a5mW5P1vWXA887cnA==
+"@shapelessed/simple-dev-manager@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@shapelessed/simple-dev-manager/-/simple-dev-manager-1.0.3.tgz#1e90ece94a589f81a3f74664f1fdb2670a3ec1e7"
+  integrity sha512-FVYUwcEFe2xdWeM9tsBuYQD4PkYo6n/BAQrdIV7FcSAM7B07xQ2ocBU8UNZASuOco+deDL/EM1WENGAAL3m+VA==
   dependencies:
     chalk "4.1.2"
     tree-kill "^1.2.2"

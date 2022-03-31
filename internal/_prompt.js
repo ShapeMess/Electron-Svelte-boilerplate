@@ -1,5 +1,16 @@
 
-const readline = require('readline')
+const readline = require('readline');
+const c = require('chalk');
+
+function clearLine() {
+    readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
+        readline.clearLine(process.stdout, 0, () => {
+            process.stdout.write(``);
+        })
+    });
+}
+
+// TODO: Add command history
 
 module.exports = new class {
 
@@ -32,9 +43,14 @@ module.exports = new class {
                     let command = input[0];
                     input.shift();
         
-                    if (this._wantsExit) this._wantsExit = false;
+                    if (this._wantsExit) {
+                        this._wantsExit = false;
+                        clearLine()
+                    }
                     else if (this._chars.length > 0) {
-                        if (!this._handlers[command]) console.log('\n\x1b[31mUnrecognised command. Type "help" for a list of commands.\x1b[0m')
+                        if (!this._handlers[command]) {
+                            console.log(c.redBright('\n\nUnrecognised command. Type "help" for a list of commands.'));
+                        }
                         else {
                             process.stdout.write('\n');
                             this._handlers[command](input);
@@ -42,7 +58,7 @@ module.exports = new class {
                     }
 
                     this._chars = [];
-                    this.displayText();
+                    
                     break;
                 }
 
@@ -79,7 +95,7 @@ module.exports = new class {
             if (!this._closing) {
                 readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
                     readline.clearLine(process.stdout, 0, () => {
-                        process.stdout.write(`\x1b[31mAre you sure you want to exit? (yes: Ctrl+C no: Enter)\x1b[0m `);
+                        process.stdout.write(c.redBright('Are you sure you want to exit? (yes: Ctrl+C no: Enter) '));
                     })
                 })
             }

@@ -8,33 +8,30 @@ const c = require('chalk');
 const Manager = require('@shapelessed/simple-dev-manager').default;
 const prompt = require('./_prompt');
 
-program
-    .option('-w, --watch', 'Watches crucial backend files for changes and restards Electron automatically.');
-
+// Get spawn parameters
+program.option('-w, --watch', 'Watches crucial backend files for changes and restards Electron automatically.');
 program.parse();
 const options = program.opts();
 
+// Project root
 const root = join(__dirname, '..');
 
 // Directories where to watch for changes after which
 // Electron should be restarted.
+// Some files can not be reloaded seamlessly by electron-reload.
 const watched = parse(readFileSync(join(root, 'internal/watchlist.yaml'), { encoding: 'utf-8'}));
  
-let _ensDelayReady = true;
-let _watchingBackend = false;
 
-
+// Ensures equal spaces in some of console logs
 const fixedSpace = (spaces, string) => {
     const sl = string.length;
     const cap = x => x > 2 ? x : 2;
     return [string, Array(cap(spaces - sl)).join(' ')].join('');
 }
 
-
-/** 
- * Ensures a function is only called at most once per second.
- * @param {Function} callback 
- */
+// fs.watch can sometimes trigger more than once per file change
+// so ensure electron reloads only once per second, ignoring all the duplicate calls.
+let _ensDelayReady = true;
 const ensureDelay = (callback) => {
     if (_ensDelayReady) {
         _ensDelayReady = false;
@@ -42,6 +39,10 @@ const ensureDelay = (callback) => {
         setTimeout(() => _ensDelayReady = true, 1000);
     }
 };
+
+
+// Determines whether the backend files are being watched and doesn't allow to re-watch them.
+let _watchingBackend = false;
 
 // Watch directories and restart Electron if set with --watch or -w
 function watchBackend() {
@@ -59,15 +60,19 @@ function watchBackend() {
         });
     })
 }
+// Watch automatically if --watch parameter is present
 if (options.watch) watchBackend();
 
 
-
+// Create a manager for managing all the child processes
 const manager = new Manager([
     {
         name: 'tsc',
-        command: 'tsc -w'
-    },
+        command: 'tsc -w',
+        options: {
+            cwd: join(root, '/src')
+        }
+    },  
     {
         name: 'electron',
         command: 'npm run electron'
@@ -78,12 +83,12 @@ const manager = new Manager([
     },
 ]);
 
-manager.start();
+// Close all the child processes if user wants to exit the app.
+prompt.onExit = () => manager.exit();
 
-prompt.onExit = () => {
-    manager.exit();
-}
 
+// Register command handlers.
+// Reload <name>
 prompt.on('reload', async (argv) => {
     let status = await manager.restart(argv[0]);
     console.log('');
@@ -92,19 +97,21 @@ prompt.on('reload', async (argv) => {
     if (status === 'unknown_name') console.log(c.redBright(`Unknown process name. Type "list" for a list of running processes.`));
 });
 
+// Watch
 prompt.on('watch', () => {
     if (!_watchingBackend) watchBackend();
     else console.log(c.redBright('\nAlready watching backend files.'))
 });
 
+// List
 prompt.on('list', () => {
     let processes = [];
 
     const fs = (string) => fixedSpace(15, string);
     const s = (alive) => alive ? c.greenBright(fs('alive')) : c.redBright(fs('dead'));
 
-    processes.push(`${(fs('name'))} ${fs('status')} ${fs('command')}`);
-    processes.push('')
+    processes.push(c.redBright`${(fs('name'))} ${fs('status')} ${fs('command')}`);
+    processes.push(`${(fs('-'))} ${fs('-')} ${fs('-')}`);
 
     for (const key in manager.process) {
         if (Object.hasOwnProperty.call(manager.process, key)) {
@@ -113,8 +120,8 @@ prompt.on('list', () => {
         }
     }
 
-    console.log('');
     console.log(processes.join('\n'))
+    console.log('');
 
 });
 
@@ -128,3 +135,6 @@ c`
 `
     );
 })
+
+// Start the child processes
+manager.start();
