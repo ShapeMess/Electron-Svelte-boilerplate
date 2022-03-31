@@ -1,11 +1,11 @@
 {
-  "name": "svelte-electron-boilerplate",
+  "name": "xplorer",
   "version": "0.0.1",
-  "description": "A ready to use boilerplate for creating Electron apps using Svelte and TypeScript.",
+  "description": "An overengineered explorer for Windows and Linux",
   "main": "index.js",
   "repository": "https://github.com/ShapeMess/XPlorer.git",
   "author": "ShapeMess",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "private": true,
   "scripts": {
     "svelte-build": "rollup -c",
