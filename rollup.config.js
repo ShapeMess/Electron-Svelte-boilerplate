@@ -19,10 +19,14 @@ function serve() {
 	return {
 		writeBundle() {
 			if (server) return;
-			server = require('child_process').spawn('npm', ['run', 'svelte-start', '--', '--dev'], {
-				stdio: ['ignore', 'inherit', 'inherit'],
-				shell: true
-			}); 
+
+			// No need to run a local server because Electron 
+			// will reload automatically
+
+			// server = require('child_process').spawn('npm', ['run', 'svelte-start', '--', '--dev'], {
+			// 	stdio: ['ignore', 'inherit', 'inherit'],
+			// 	shell: true
+			// }); 
 
 			process.on('SIGTERM', toExit);
 			process.on('exit', toExit);

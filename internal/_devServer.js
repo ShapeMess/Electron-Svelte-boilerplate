@@ -19,8 +19,7 @@ const root = join(__dirname, '..');
 // Directories where to watch for changes after which
 // Electron should be restarted.
 // Some files can not be reloaded seamlessly by electron-reload.
-const watched = parse(readFileSync(join(root, 'internal/watchlist.yaml'), { encoding: 'utf-8'}));
- 
+const props = parse(readFileSync(join(root, 'internal/props.yaml'), { encoding: 'utf-8' }));
 
 // Ensures equal spaces in some of console logs
 const fixedSpace = (spaces, string) => {
@@ -49,7 +48,7 @@ function watchBackend() {
     console.log(c.redBright('\nEnabled live reload for backend files.\n'));
     _watchingBackend = true;
 
-    watched.directories.forEach(dir => {
+    props.watch.forEach(dir => {
         watch(join(root, dir), { recursive: true }, (e, filename) => {
             ensureDelay(() => {
 
@@ -63,49 +62,36 @@ function watchBackend() {
 // Watch automatically if --watch parameter is present
 if (options.watch) watchBackend();
 
-
 // Create a manager for managing all the child processes
-const manager = new Manager([
-    {
-        name: 'tsc',
-        command: 'tsc -w',
-        options: {
-            cwd: join(root, '/src')
-        }
-    },  
-    {
-        name: 'electron',
-        command: 'npm run electron'
-    },
-    {
-        name: 'svelte',
-        command: 'npm run svelte-dev'
-    },
-]);
+const manager = new Manager(props.scripts.map(script => {
+    if (script.cwd) {
+        script.options = {...script.options};
+        script.options.cwd = join(root, script.cwd);
+        delete script.cwd;
+    }
+    return script;
+}));
 
 manager.messages = {
-    processSpawning: 'Starting %s.',
-    processClosed: 'Process %s closed unexpectedly.',
-    processForceClosed: 'Killed process %s.',
-    processRestarting: '\nRestarting process %s.',
-
-    startSequenceError: 'An error had accured while spawning child processes.',
-
-    startProcessSuccess: 'Successfully spawned all child processes.',
-    managerExit: 'Closing the process manager.'
+    processSpawning:        'Starting %s.',
+    processClosed:          'Process %s closed unexpectedly.',
+    processForceClosed:     'Killed process %s.',
+    processRestarting:      '\nRestarting process %s.',
+    startSequenceError:     'An error had accured while spawning child processes.',
+    startProcessSuccess:    'Successfully spawned all child processes.',
+    managerExit:            'Closing the process manager.'
 }
 
 // Close all the child processes if user wants to exit the app.
 prompt.onExit = () => manager.exit();
 
-
-// Register command handlers.
+// Command handlers.
 // Reload <name>
 prompt.on('reload', async (argv) => {
     let status = await manager.restart(argv[0]);
     if (status === 'success') console.log(c.greenBright(`\nSuccessfully restarted process "${argv[0]}".\n`));
     if (status === 'failed') console.log(c.redBright(`\nFailed to restart process.\n`));
-    if (status === 'unknown_name') console.log(c.redBright(`\nUnknown process name. Type "list" for a list of running processes.\n`));
+    if (status === 'unknown_name') console.log(c.redBright(`\nUnknown process. Type "list" for a list of running processes.\n`));
 });
 
 // Watch
@@ -137,16 +123,18 @@ prompt.on('list', () => {
 
 });
 
-
 prompt.on('help', () => {
     console.log(
 c`
 {blueBright list}            Lists all running child processes.
 {blueBright reload <name>}   Reloads a given process.
-{blueBright watch}           Watches files/directories specified in {underline internal/watchlist.yaml} for changes and reloads Electron automatically.
+{blueBright watch}           Watches files/directories specified in {underline internal/props.yaml} for changes and reloads Electron automatically.
+
+{redBright Ctrl + C}        Shuts down all the child processes and exits the application.
+
 `
     );
 })
 
-// Start the child processes
+// Spawn all the child processes
 manager.start();

@@ -1,0 +1,22 @@
+
+# Specify all your development servers, compilers and other child
+# processes here. 
+# Usage: <name, command>
+scripts:
+    - 
+        name: tsc
+        command: tsc -w
+        cwd: /src
+    - 
+        name: electron
+        command: electron . --dev
+    - 
+        name: svelte
+        command: npm run svelte-dev
+        
+
+# Changes to any files/directories specified here will cause 
+# Electron to restart entirely. This is helpful when working with 
+# files that can not be reloaded seamlessly by electron-reload.
+watch:
+    - index.js

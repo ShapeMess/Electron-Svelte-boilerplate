@@ -1,6 +1,0 @@
-
-# Changes to any files/directories specified here will cause 
-# Electron to restart entirely. This is helpful when working with 
-# files that can not be reloaded seamlessly by electron-reload.
-directories:
-    - index.js
