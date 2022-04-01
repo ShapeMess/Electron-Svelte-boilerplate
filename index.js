@@ -6,14 +6,14 @@ const { app, BrowserWindow } = electron;
 // Set operating environment
 process.env.NODE_ENV = process.argv.includes('--dev') ? 'development' : 'production';
 
-let _development = process.env.NODE_ENV === 'development';
+let production = process.env.NODE_ENV === 'production';
 
 // Enable live reload for all the files inside the project directory
-_development && require('electron-reload')(__dirname);
+!production && require('electron-reload')(__dirname);
 
 /**  
  * Store the main window object publicly so it's not garbage-collected.
- * @type electron.BrowserWindow 
+ * @type {electron.BrowserWindow} 
  */ 
 let mainWindow; 
 
@@ -46,8 +46,8 @@ const createWindow = () => {
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, 'app/index.html'));
 
-    // Open the DevTools if not in production.
-    _development && mainWindow.webContents.openDevTools();
+    // Open the DevTools.
+    !production && mainWindow.webContents.openDevTools();
     
     // Register listeners on the window, so we can update the state
     // automatically (the listeners will be removed when the window is closed)
