@@ -10,7 +10,7 @@ let _development = process.env.NODE_ENV === 'development';
 
 // Enable live reload for all the files inside the project directory
 _development && require('electron-reload')(__dirname);
- 
+
 /**  
  * Store the main window object publicly so it's not garbage-collected.
  * @type electron.BrowserWindow 

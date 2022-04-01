@@ -1,22 +1,32 @@
 
 # Specify all your development servers, compilers and other child
 # processes here. 
-# Usage: <name, command>
+# Usage:
+
+# name:     <process name for use in the CLI>
+# command:  <spawn command>
+# cwd:      <root directory for the spawned process to work in (current working directory)>
+# options?: <native spawn options of child_process.spawn>
+
 scripts:
     - 
         name: tsc
         command: tsc -w
         cwd: /src
+    -
+        name: sass
+        command: sass --watch app/sass:app/css
+    - 
+        name: svelte
+        command: rollup -c -w
     - 
         name: electron
         command: electron . --dev
-    - 
-        name: svelte
-        command: npm run svelte-dev
         
 
 # Changes to any files/directories specified here will cause 
 # Electron to restart entirely. This is helpful when working with 
 # files that can not be reloaded seamlessly by electron-reload.
+
 watch:
     - index.js

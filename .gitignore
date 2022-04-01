@@ -3,10 +3,11 @@
 
 # Compiled public files
 /app/bundle/
-/app/sass/*.css
-/app/sass/*.map
+/app/css/*.css
+/app/css/*.css.map
 
 # TypeScript compilation results
+# and non renderer-safe files
 /backend/
 
 # OS specific files
