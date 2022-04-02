@@ -10,10 +10,15 @@ child processes.
 Go to your project folder and install the boilerplate using Degit
 ```bash
 npx degit ShapeMess/Electron-svelte-boilerplate ./
-yarn (or) npm install
 ```
-After installing all the dependencies you can run the included CLI with:
+Or clone the repository:
+
 ```bash
+git clone https://github.com/ShapeMess/Electron-Svelte-boilerplate ./
+```
+Install all the dependencies and run the included CLI app with:
+```bash
+npm install (or) yarn 
 npm run dev
 ```
 
@@ -60,7 +65,3 @@ You can watch files by running `watch` from within the CLI app or by spawning th
 ```bash
 npm run dev -- --watch
 ```
-
----
-
-### For individual configuration of Electron or the included compilers vist its documentation website.
