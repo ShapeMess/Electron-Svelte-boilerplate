@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": "https://github.com/ShapeMess/Electron-svelte-boilerplate.git",
   "author": "ShapeMess",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "svelte-build": "rollup -c",
